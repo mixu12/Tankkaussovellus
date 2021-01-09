@@ -78,17 +78,18 @@ public class Tilastot extends AppCompatActivity {
             double tankattuNyt = tankkauslista.get(i).getMaara();
             String tankattuNytTekstina = String.valueOf(df.format(tankattuNyt));
             String paiva = tankkauslista.get(i).getPaiva();
+            double kokonaishinta = tankkauslista.get(i).getKokonaishinta();
 
             if (i < 1){
                 String kulutusTekstina = String.valueOf(df.format(kulutus));
-                String listaan = tankattuNytTekstina + " l, " + String.valueOf(matkaNyt) + " km, " + kulutusTekstina + " l/100 km, "+ paiva;
+                String listaan = tankattuNytTekstina + " l, " + String.valueOf(matkaNyt) + " km, " + kulutusTekstina + " l/100 km, "+ kokonaishinta + " €, " + paiva;
                 tankkaustulokset.add(listaan);
             } else {
                 int matkaEdellinen = tankkauslista.get(i-1).getMittarilukema();
                 kulutus = 100.0 * ((tankattuNyt) / (matkaNyt - matkaEdellinen));
                 String kulutusTekstina = String.valueOf(df.format(kulutus));
 
-                String listaan = tankattuNytTekstina + " l, " + String.valueOf(matkaNyt) + " km, " + kulutusTekstina + " l/100 km, " + paiva;
+                String listaan = tankattuNytTekstina + " l, " + String.valueOf(matkaNyt) + " km, " + kulutusTekstina + " l/100 km, " + kokonaishinta + " €, "+ paiva;
                 tankkaustulokset.add(listaan);
                 System.out.println(tankkaustulokset);
             }

@@ -7,17 +7,29 @@ public class Tankkaus {
     private int id;
     private double maara;
     private int mittarilukema;
-    private double litrahinta;
+    private double kokonaishinta;
     private int tankkausasemaid;
     private int autoid;
+    private String paiva;
 
-    public Tankkaus(int id, double maara, int mittarilukema, double litrahinta){
+    public Tankkaus(int id, double maara, int mittarilukema, double kokonaishinta){
         this.id = id;
         this.maara = maara;
         this.mittarilukema = mittarilukema;
-        this.litrahinta = litrahinta;
+        this.kokonaishinta = kokonaishinta;
         this.tankkausasemaid = 0;
         this.autoid = 0;
+        this.paiva = getPaiva();
+    }
+
+    public Tankkaus(int id, double maara, int mittarilukema, double kokonaishinta, String paiva){
+        this.id = id;
+        this.maara = maara;
+        this.mittarilukema = mittarilukema;
+        this.kokonaishinta = kokonaishinta;
+        this.tankkausasemaid = 0;
+        this.autoid = 0;
+        this.paiva = paiva;
     }
 
     public Tankkaus(int id, double maara, int mittarilukema){
@@ -32,14 +44,18 @@ public class Tankkaus {
         return this.mittarilukema;
     }
 
-    public double getLitrahinta(){
-        return this.litrahinta;
+    public double getKokonaishinta(){
+        return this.kokonaishinta;
     }
 
     public String getPaiva(){
-        ZonedDateTime aika = ZonedDateTime.now();
-        DateTimeFormatter muokkaaja = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        return aika.format(muokkaaja);
+        if (this.paiva.equals("a")) {
+            ZonedDateTime aika = ZonedDateTime.now();
+            DateTimeFormatter muokkaaja = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+            return aika.format(muokkaaja);
+        } else{
+            return this.paiva;
+        }
     }
 
     public int getTankkausasemaid(){
@@ -50,13 +66,8 @@ public class Tankkaus {
         return this.autoid;
     }
 
-
-    public double kokonaishinta(){
-        return this.maara * this.litrahinta;
-    }
-
     public String toString(){
-        return "Tankattu " + this.maara + " l, " + " " + this.mittarilukema + " km, " + this.getPaiva();
+        return this.maara + " l, " + " " + this.mittarilukema + " km, " + kokonaishinta + " €, " + this.getPaiva();
     }
 
 }

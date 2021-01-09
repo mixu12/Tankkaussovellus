@@ -17,7 +17,7 @@ public class Tankkauskanta extends SQLiteOpenHelper{
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_MAARA = "MAARA";
     public static final String COLUMN_MITTARILUKEMA = "MITTARILUKEMA";
-    public static final String COLUMN_LITRAHINTA = "LITRAHINTA";
+    public static final String COLUMN_KOKONAISHINTA = "KOKONAISHINTA";
     public static final String COLUMN_PAIVA = "PAIVA";
     public static final String COLUMN_TANKKAUSASEMAID = "TANKKAUSASEMAID";
     public static final String COLUMN_AUTOID = "AUTOID";
@@ -34,7 +34,7 @@ public class Tankkauskanta extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTableStatement = "CREATE TABLE " + TANKKAUKSET + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_MAARA + " REAL, " + COLUMN_MITTARILUKEMA + " INTEGER, "
-                + COLUMN_LITRAHINTA + " REAL, " + COLUMN_PAIVA + " TEXT, " + COLUMN_TANKKAUSASEMAID + " INTEGER, " + COLUMN_AUTOID + " INTEGER)";
+                + COLUMN_KOKONAISHINTA + " REAL, " + COLUMN_PAIVA + " TEXT, " + COLUMN_TANKKAUSASEMAID + " INTEGER, " + COLUMN_AUTOID + " INTEGER)";
 
         db.execSQL(createTableStatement);
 
@@ -55,7 +55,7 @@ public class Tankkauskanta extends SQLiteOpenHelper{
 
         cv.put(COLUMN_MAARA, tankkaus.getMaara());
         cv.put(COLUMN_MITTARILUKEMA, tankkaus.getMittarilukema());
-        cv.put(COLUMN_LITRAHINTA, tankkaus.getLitrahinta());
+        cv.put(COLUMN_KOKONAISHINTA, tankkaus.getKokonaishinta());
         cv.put(COLUMN_PAIVA, tankkaus.getPaiva());
         cv.put(COLUMN_TANKKAUSASEMAID, tankkaus.getTankkausasemaid());
         cv.put(COLUMN_AUTOID, tankkaus.getAutoid());
@@ -82,9 +82,10 @@ public class Tankkauskanta extends SQLiteOpenHelper{
                 int id = cursor.getInt(0);
                 double maara = cursor.getDouble(1);
                 int mittarilukemanSyotto = cursor.getInt(2);
-                double litrahinta = cursor.getDouble(cursor.getColumnIndex(COLUMN_LITRAHINTA));
+                double kokonaishinta = cursor.getDouble(cursor.getColumnIndex(COLUMN_KOKONAISHINTA));
+                String paiva = cursor.getString(cursor.getColumnIndex(COLUMN_PAIVA));
 
-                Tankkaus uusiTankkaus = new Tankkaus(id, maara, mittarilukemanSyotto, litrahinta);
+                Tankkaus uusiTankkaus = new Tankkaus(id, maara, mittarilukemanSyotto, kokonaishinta, paiva);
                 tankkauslista.add(uusiTankkaus);
 
             } while (cursor.moveToNext());
@@ -136,24 +137,29 @@ public class Tankkauskanta extends SQLiteOpenHelper{
 
     public double keskihinta(){
 
-        double avgLitrahinta = 0;
+        double hintojenSummat = 0;
+        double maaranSumma = 0;
         // Datan haku kannasta
 
-        String queryString = "SELECT AVG(" + COLUMN_LITRAHINTA + ") as keskihinta FROM " + TANKKAUKSET + " WHERE " + COLUMN_LITRAHINTA + "> 0";
+        String queryString = "SELECT SUM(" + COLUMN_KOKONAISHINTA + ") as hintojenSummat, SUM(" + COLUMN_MAARA + ") as maaranSumma FROM " + TANKKAUKSET + " WHERE " + COLUMN_KOKONAISHINTA + "> 0";
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(queryString, null);
 
         if (cursor.moveToFirst()) {
             do {
-                avgLitrahinta = cursor.getDouble(cursor.getColumnIndex("keskihinta"));
+                hintojenSummat = cursor.getDouble(cursor.getColumnIndex("hintojenSummat"));
+                maaranSumma = cursor.getDouble(cursor.getColumnIndex("maaranSumma"));
             } while (cursor.moveToNext());
         }
 
         // Sulkee tietokannan
         cursor.close();
         db.close();
-        return avgLitrahinta;
+
+        double keskihinta = hintojenSummat / maaranSumma;
+
+        return keskihinta;
     }
 
     public double tankattuYhteensa(){
