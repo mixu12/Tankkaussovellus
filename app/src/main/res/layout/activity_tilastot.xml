@@ -14,6 +14,13 @@
         app:layout_constraintTop_toBottomOf="@+id/keskihinta" />
 
     <TextView
+        android:id="@+id/tankattuYhteensaEuroina"
+        android:layout_width="117dp"
+        android:layout_height="30dp"
+        app:layout_constraintStart_toEndOf="@+id/tekstiTankattuYhteensaEuroina"
+        app:layout_constraintTop_toBottomOf="@+id/tankattuYhteensa" />
+
+    <TextView
         android:id="@+id/tekstiTankattuYhteensa"
         android:layout_width="145dp"
         android:layout_height="20dp"
@@ -23,24 +30,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tekstiKeskihinta" />
 
+    <TextView
+        android:id="@+id/tekstiTankattuYhteensaEuroina"
+        android:layout_width="145dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:text="Kokonaishinta €:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tekstiTankattuYhteensa" />
+
     <ListView
         android:id="@+id/listview"
         android:layout_width="377dp"
         android:layout_height="403dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="20dp"
         android:textSize="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tankattuYhteensaEuroina" />
 
     <TextView
         android:id="@+id/keskikulutus"
         android:layout_width="117dp"
         android:layout_height="30dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintStart_toEndOf="@+id/tekstiKeskikulutus"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -56,7 +73,7 @@
         android:layout_width="145dp"
         android:layout_height="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:text="Keskikulutus l/100 km:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -70,4 +87,5 @@
         android:text="Keskihinta €/l:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tekstiKeskikulutus" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

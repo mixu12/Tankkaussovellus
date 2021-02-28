@@ -184,6 +184,28 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         return sumTankattu;
     }
 
+    public double tankattuYhteensaEuroina(){
+
+        double sumTankattuEurot = 0;
+        // Datan haku kannasta
+
+        String queryString = "SELECT SUM(" + COLUMN_KOKONAISHINTA + ") as tankattuYhteensaEuroina FROM " + TANKKAUKSET;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                sumTankattuEurot = cursor.getDouble(cursor.getColumnIndex("tankattuYhteensaEuroina"));
+            } while (cursor.moveToNext());
+        }
+
+        // Sulkee tietokannan
+        cursor.close();
+        db.close();
+        return sumTankattuEurot;
+    }
+
     public boolean lisaaAuto(Auto auto){
 
         SQLiteDatabase db = this.getWritableDatabase();

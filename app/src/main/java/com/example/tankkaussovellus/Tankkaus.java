@@ -19,7 +19,7 @@ public class Tankkaus {
         this.kokonaishinta = kokonaishinta;
         this.tankkausasemaid = 0;
         this.autoid = 0;
-        this.paiva = getPaiva();
+        this.paiva = "a";
     }
 
     public Tankkaus(int id, double maara, int mittarilukema, double kokonaishinta, String paiva){
