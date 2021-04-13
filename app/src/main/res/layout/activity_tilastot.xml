@@ -8,14 +8,14 @@
 
     <TextView
         android:id="@+id/tankattuYhteensa"
-        android:layout_width="117dp"
+        android:layout_width="70dp"
         android:layout_height="30dp"
         app:layout_constraintStart_toEndOf="@+id/tekstiTankattuYhteensa"
         app:layout_constraintTop_toBottomOf="@+id/keskihinta" />
 
     <TextView
         android:id="@+id/tankattuYhteensaEuroina"
-        android:layout_width="117dp"
+        android:layout_width="70dp"
         android:layout_height="30dp"
         app:layout_constraintStart_toEndOf="@+id/tekstiTankattuYhteensaEuroina"
         app:layout_constraintTop_toBottomOf="@+id/tankattuYhteensa" />
@@ -55,7 +55,7 @@
 
     <TextView
         android:id="@+id/keskikulutus"
-        android:layout_width="117dp"
+        android:layout_width="70dp"
         android:layout_height="30dp"
         android:layout_marginTop="20dp"
         app:layout_constraintStart_toEndOf="@+id/tekstiKeskikulutus"
@@ -63,7 +63,7 @@
 
     <TextView
         android:id="@+id/keskihinta"
-        android:layout_width="117dp"
+        android:layout_width="70dp"
         android:layout_height="30dp"
         app:layout_constraintStart_toEndOf="@+id/tekstiKeskihinta"
         app:layout_constraintTop_toBottomOf="@+id/keskikulutus" />
@@ -87,5 +87,17 @@
         android:text="Keskihinta €/l:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tekstiKeskikulutus" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="20dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/keskikulutus"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

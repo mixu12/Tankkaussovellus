@@ -8,8 +8,6 @@ public class Tankkaus {
     private double maara;
     private int mittarilukema;
     private double kokonaishinta;
-    private int tankkausasemaid;
-    private int autoid;
     private String paiva;
 
     public Tankkaus(int id, double maara, int mittarilukema, double kokonaishinta){
@@ -17,8 +15,6 @@ public class Tankkaus {
         this.maara = maara;
         this.mittarilukema = mittarilukema;
         this.kokonaishinta = kokonaishinta;
-        this.tankkausasemaid = 0;
-        this.autoid = 0;
         this.paiva = "a";
     }
 
@@ -27,13 +23,15 @@ public class Tankkaus {
         this.maara = maara;
         this.mittarilukema = mittarilukema;
         this.kokonaishinta = kokonaishinta;
-        this.tankkausasemaid = 0;
-        this.autoid = 0;
         this.paiva = paiva;
     }
 
     public Tankkaus(int id, double maara, int mittarilukema){
         this(id, maara, mittarilukema, 0.0);
+    }
+
+    public int getId(){
+        return this.id;
     }
 
     public double getMaara(){
@@ -56,14 +54,6 @@ public class Tankkaus {
         } else{
             return this.paiva;
         }
-    }
-
-    public int getTankkausasemaid(){
-        return this.tankkausasemaid;
-    }
-
-    public int getAutoid(){
-        return this.autoid;
     }
 
     public String toString(){

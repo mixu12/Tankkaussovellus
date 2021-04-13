@@ -1,14 +1,10 @@
 package com.example.tankkaussovellus;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -18,14 +14,27 @@ import android.widget.Toast;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
-public class Tankkausnakyma extends AppCompatActivity {
+public class TankkausnakymaMuokkaus extends AppCompatActivity {
+
+    Tankkauskanta tietokanta;
+
+    List<Tankkaus> tankkauslista;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tankkausnakyma);
 
+        tietokanta = new Tankkauskanta(TankkausnakymaMuokkaus.this);
+
+        Intent intent = getIntent();
+        final int valittuID = (int) intent.getSerializableExtra("tankkausID");
+
+        listaan(valittuID);
+
+        System.out.println(tankkauslista.size());
         final EditText maara = (EditText) findViewById(R.id.maara);
         final EditText mittarilukemanSyotto = (EditText) findViewById(R.id.mittarilukemanSyotto);
         final EditText hinnanSyotto = (EditText) findViewById(R.id.hinnanSyotto);
@@ -33,7 +42,10 @@ public class Tankkausnakyma extends AppCompatActivity {
 
         final Button tallennaTankkaus = (Button) findViewById(R.id.tallennaTankkaus);
 
-        tankkauspaiva.setText(Paiva());
+        maara.setText(String.valueOf(tankkauslista.get(0).getMaara()));
+        mittarilukemanSyotto.setText(String.valueOf(tankkauslista.get(0).getMittarilukema()));
+        hinnanSyotto.setText(String.valueOf(tankkauslista.get(0).getKokonaishinta()));
+        tankkauspaiva.setText(tankkauslista.get(0).getPaiva());
 
         tallennaTankkaus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,26 +60,22 @@ public class Tankkausnakyma extends AppCompatActivity {
                     getHinnanSyotto = Double.valueOf(hinnanSyotto.getText().toString());
                 }
 
-                tallenna(getMaara,getMittarilukemanSyotto,getHinnanSyotto,getTankkauspaiva);
-
-                maara.setText("");
-                mittarilukemanSyotto.setText("");
-                hinnanSyotto.setText("");
-                tankkauspaiva.setText(Paiva());
+                tallenna(valittuID, getMaara,getMittarilukemanSyotto,getHinnanSyotto,getTankkauspaiva);
 
                 suljeNappaimisto();
+
+                tilastoihin();
             }
         });
     }
 
-    public void tallenna(double getMaara, int getMittarilukemanSyotto, double getHinnanSyotto, String getTankkauspaiva){
+    public void tallenna(int valittuID, double getMaara, int getMittarilukemanSyotto, double getHinnanSyotto, String getTankkauspaiva){
 
         Tankkaus tankkaus = new Tankkaus(-1, getMaara, getMittarilukemanSyotto, getHinnanSyotto, getTankkauspaiva);
 
-        Tankkauskanta tankkauskanta = new Tankkauskanta(Tankkausnakyma.this);
-        boolean onnistui = tankkauskanta.lisaaTankkaus(tankkaus);
-        long testi = tankkauskanta.createTankkaustiedot(1,1);
-        Toast.makeText(Tankkausnakyma.this, "Tallennus onnistui", Toast.LENGTH_SHORT).show();
+        Tankkauskanta tankkauskanta = new Tankkauskanta(TankkausnakymaMuokkaus.this);
+        boolean onnistui = tankkauskanta.muokkaaTankkausta(valittuID, getMaara, getMittarilukemanSyotto, getHinnanSyotto, getTankkauspaiva);
+        Toast.makeText(TankkausnakymaMuokkaus.this, "Muokkaus onnistui", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -79,27 +87,14 @@ public class Tankkausnakyma extends AppCompatActivity {
         }
     }
 
-    public String Paiva() {
-        ZonedDateTime aika = ZonedDateTime.now();
-        DateTimeFormatter muokkaaja = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        return aika.format(muokkaaja);
+    public void listaan(int valittuID){
+        tankkauslista = new ArrayList<>();
+        tankkauslista = tietokanta.yksiTankkaus(valittuID);
+        System.out.println(tankkauslista);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.ylamenu,menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.muokkaa:
-                Intent intent = new Intent(Tankkausnakyma.this, Muokkaa.class);
-                startActivity(intent);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public void tilastoihin(){
+        Intent intent = new Intent(this, Tilastot.class);
+        startActivity(intent);
     }
 }
