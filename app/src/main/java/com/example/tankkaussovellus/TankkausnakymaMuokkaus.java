@@ -22,6 +22,8 @@ public class TankkausnakymaMuokkaus extends AppCompatActivity {
 
     List<Tankkaus> tankkauslista;
 
+    int valittuID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,12 +31,10 @@ public class TankkausnakymaMuokkaus extends AppCompatActivity {
 
         tietokanta = new Tankkauskanta(TankkausnakymaMuokkaus.this);
 
-        Intent intent = getIntent();
-        final int valittuID = (int) intent.getSerializableExtra("tankkausID");
+        setIntentit();
 
         listaan(valittuID);
 
-        System.out.println(tankkauslista.size());
         final EditText maara = (EditText) findViewById(R.id.maara);
         final EditText mittarilukemanSyotto = (EditText) findViewById(R.id.mittarilukemanSyotto);
         final EditText hinnanSyotto = (EditText) findViewById(R.id.hinnanSyotto);
@@ -71,12 +71,38 @@ public class TankkausnakymaMuokkaus extends AppCompatActivity {
 
     public void tallenna(int valittuID, double getMaara, int getMittarilukemanSyotto, double getHinnanSyotto, String getTankkauspaiva){
 
-        Tankkaus tankkaus = new Tankkaus(-1, getMaara, getMittarilukemanSyotto, getHinnanSyotto, getTankkauspaiva);
-
         Tankkauskanta tankkauskanta = new Tankkauskanta(TankkausnakymaMuokkaus.this);
-        boolean onnistui = tankkauskanta.muokkaaTankkausta(valittuID, getMaara, getMittarilukemanSyotto, getHinnanSyotto, getTankkauspaiva);
+        boolean onnistui = tankkauskanta.muokkaaTankkausta(valittuID, getMaara, getMittarilukemanSyotto, getHinnanSyotto, getTankkauspaiva, getVuosiUudestaTankkauspaivasta(getTankkauspaiva), getKuukausiUudestaTankkauspaivasta(getTankkauspaiva));
+
         Toast.makeText(TankkausnakymaMuokkaus.this, "Muokkaus onnistui", Toast.LENGTH_SHORT).show();
 
+    }
+
+    public int getVuosiUudestaTankkauspaivasta(String uusiTankkauspaiva){
+        String[] vuosiStringina = uusiTankkauspaiva.split("\\.");
+        if (vuosiStringina[2].matches(("20[0-9]{2}"))){
+            int vuosi = Integer.valueOf(vuosiStringina[2]);
+            return vuosi;
+        }
+
+        if (vuosiStringina[2].matches(("[0-9]{2}"))){
+            String vuoteenEkatNumerot = "20" + vuosiStringina[2];
+            int vuosi = Integer.valueOf(vuoteenEkatNumerot);
+            return vuosi;
+        }
+        return 0;
+    }
+
+    public int getKuukausiUudestaTankkauspaivasta(String uusiTankkauspaiva){
+        String[] kuukausiStringina = uusiTankkauspaiva.split("\\.");
+        if (kuukausiStringina[1].matches(("0[1-9]{1}"))){
+            String[] kuukausiIlmanNollaa = kuukausiStringina[1].split("");
+            int kuukausi = Integer.valueOf(kuukausiIlmanNollaa[kuukausiIlmanNollaa.length - 1]);
+            return kuukausi;
+        } else{
+            int kuukausi = Integer.valueOf(kuukausiStringina[1]);
+            return kuukausi;
+        }
     }
 
     private void suljeNappaimisto() {
@@ -90,11 +116,16 @@ public class TankkausnakymaMuokkaus extends AppCompatActivity {
     public void listaan(int valittuID){
         tankkauslista = new ArrayList<>();
         tankkauslista = tietokanta.yksiTankkaus(valittuID);
-        System.out.println(tankkauslista);
     }
 
     public void tilastoihin(){
         Intent intent = new Intent(this, Tilastot.class);
         startActivity(intent);
+        finish();
+    }
+
+    public void setIntentit(){
+        Intent intent = getIntent();
+        valittuID = (int) intent.getSerializableExtra("tankkausID");
     }
 }

@@ -58,7 +58,6 @@ public class Muokkaa extends AppCompatActivity {
     public void listaan() {
         tankkauslista = new ArrayList<>();
         tankkauslista = tietokanta.kaikkiTankkaukset();
-        System.out.println(tankkauslista);
     }
 
     @Override

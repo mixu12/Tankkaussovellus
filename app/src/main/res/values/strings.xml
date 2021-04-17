@@ -94,11 +94,4 @@
     </string>
     <string name="action_settings">Settings</string>
 
-    <string-array name="vuosi">
-        <item>Kaikki</item>
-        <item>01.01.2020</item>
-        <item>01.01.2021</item>
-        <item>09.04.2021</item>
-    </string-array>
-
 </resources>

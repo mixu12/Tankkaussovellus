@@ -56,6 +56,33 @@ public class Tankkaus {
         }
     }
 
+    public int getVuosi(){
+        String[] vuosiStringina = this.paiva.split("\\.");
+        if (vuosiStringina[2].matches(("20[0-9]{2}"))){
+            int vuosi = Integer.valueOf(vuosiStringina[2]);
+            return vuosi;
+        }
+
+        if (vuosiStringina[2].matches(("[0-9]{2}"))){
+            String vuoteenEkatNumerot = "20" + vuosiStringina[2];
+            int vuosi = Integer.valueOf(vuoteenEkatNumerot);
+            return vuosi;
+        }
+        return 0;
+    }
+
+    public int getKuukausi(){
+        String[] kuukausiStringina = this.paiva.split("\\.");
+        if (kuukausiStringina[1].matches(("0[1-9]{1}"))){
+            String[] kuukausiIlmanNollaa = kuukausiStringina[1].split("");
+            int kuukausi = Integer.valueOf(kuukausiIlmanNollaa[1]);
+            return kuukausi;
+        } else{
+            int kuukausi = Integer.valueOf(kuukausiStringina[1]);
+            return kuukausi;
+        }
+    }
+
     public String toString(){
         return this.maara + " l, " + " " + this.mittarilukema + " km, " + kokonaishinta + " €, " + this.getPaiva();
     }

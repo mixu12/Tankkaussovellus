@@ -98,6 +98,7 @@ public class Tankkausnakyma extends AppCompatActivity {
             case R.id.muokkaa:
                 Intent intent = new Intent(Tankkausnakyma.this, Muokkaa.class);
                 startActivity(intent);
+                finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
