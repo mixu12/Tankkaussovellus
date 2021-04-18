@@ -30,8 +30,10 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
     List<Tankkaus> tankkauslista;
     ArrayList<String> tankkaustulokset;
     ArrayList<String> vuodet;
+    List<Auto> autotListaan;
 
-    String valittu = "Kaikki";
+    String valittuVuosi = "Kaikki";
+    int valitunAutonID = 0;
 
     DecimalFormat kaksiDesimaalia = new DecimalFormat("#,###,##0.00");
     DecimalFormat yksiDesimaali = new DecimalFormat("#,###,##0.0");
@@ -52,7 +54,8 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
         tankattuYhteensaEuroina();
 
         paivitaLista();
-        spinneri();
+        autotListaan();
+        spinnerit();
 
     }
 
@@ -65,7 +68,7 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
 
     public void listaan(){
         tankkauslista = new ArrayList<>();
-        tankkauslista = tietokanta.kaikkiTankkaukset();
+        tankkauslista = tietokanta.kaikkiTankkaukset(valitunAutonID);
 
         vuodet = new ArrayList<>();
         vuodet = tietokanta.vuodet();
@@ -104,26 +107,48 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
     }
 
     public void naytettavatListalla(String listaan, int i){
-        if (valittu.equals("Kaikki")){
+        if (valittuVuosi.equals("Kaikki")){
             tankkaustulokset.add(listaan);
         } else {
-            if (tankkauslista.get(i).getVuosi() == Integer.valueOf(valittu)){
+            if (tankkauslista.get(i).getVuosi() == Integer.valueOf(valittuVuosi)){
                 tankkaustulokset.add(listaan);
             }
         }
     }
 
-    public void spinneri(){
+    public void autotListaan(){
+        autotListaan = new ArrayList<>();
+        autotListaan = tietokanta.kaikkiAutot();
+
+    }
+
+    public void spinnerit(){
         Spinner spinner = findViewById(R.id.spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, vuodet);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+
+        Spinner spinnerAutoille = findViewById(R.id.spinnerAutoille);
+        ArrayAdapter<Auto> adapterAutoille = new ArrayAdapter<Auto>(this, android.R.layout.simple_spinner_dropdown_item, autotListaan);
+        adapterAutoille.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerAutoille.setAdapter(adapterAutoille);
+        spinnerAutoille.setOnItemSelectedListener(this);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        valittu = parent.getItemAtPosition(position).toString();
+        Spinner spinner = (Spinner) parent;
+        Spinner spinnerAutoille = (Spinner) parent;
+
+        if (spinner.getId() == R.id.spinner){
+            valittuVuosi = parent.getItemAtPosition(position).toString();
+        }
+
+        if (spinnerAutoille.getId() == R.id.spinnerAutoille){
+            String valittuAuto = parent.getItemAtPosition(position).toString();
+            valitunAutonID = tietokanta.valitunAutonID(valittuAuto);
+        }
 
         tankattuYhteensaLitroina();
         tankattuYhteensaEuroina();
@@ -140,10 +165,10 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
     public void keskikulutus(){
         TextView keskikulutus = (TextView) findViewById(R.id.keskikulutus);
         double keskikulutusLuku = 0.0;
-        if (valittu.equals("Kaikki")){
-            keskikulutusLuku = tietokanta.keskikulutus();
+        if (valittuVuosi.equals("Kaikki")){
+            keskikulutusLuku = tietokanta.keskikulutus(valitunAutonID);
         } else {
-            keskikulutusLuku = tietokanta.keskikulutus(valittu);
+            keskikulutusLuku = tietokanta.keskikulutus(valittuVuosi, valitunAutonID);
         }
         String keskikulutusStringina = String.valueOf((yksiDesimaali.format(keskikulutusLuku)));
         keskikulutus.setText(keskikulutusStringina);
@@ -152,10 +177,10 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
     public void keskihinta(){
         TextView keskihinta = (TextView) findViewById(R.id.keskihinta);
         double keskihintaLuku = 0.0;
-        if (valittu.equals("Kaikki")){
-            keskihintaLuku = tietokanta.keskihinta();
+        if (valittuVuosi.equals("Kaikki")){
+            keskihintaLuku = tietokanta.keskihinta(valitunAutonID);
         } else {
-            keskihintaLuku = tietokanta.keskihinta(valittu);
+            keskihintaLuku = tietokanta.keskihinta(valittuVuosi, valitunAutonID);
         }
 
         String keskihintaStringina = String.valueOf((kaksiDesimaalia.format(keskihintaLuku)));
@@ -165,10 +190,10 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
     public void tankattuYhteensaLitroina() {
         TextView tankattuYhteensa = (TextView) findViewById(R.id.tankattuYhteensa);
         double sumTankattu = 0.0;
-        if (valittu.equals("Kaikki")){
-            sumTankattu = tietokanta.tankattuYhteensa();
+        if (valittuVuosi.equals("Kaikki")){
+            sumTankattu = tietokanta.tankattuYhteensa(valitunAutonID);
         } else {
-            sumTankattu = tietokanta.tankattuYhteensa(valittu);
+            sumTankattu = tietokanta.tankattuYhteensa(valittuVuosi, valitunAutonID);
         }
 
         String sumTankattuStringina = String.valueOf((kaksiDesimaalia.format(sumTankattu)));
@@ -178,10 +203,10 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
     public void tankattuYhteensaEuroina(){
         TextView tankattuYhteensaEuroina = (TextView) findViewById(R.id.tankattuYhteensaEuroina);
         double sumTankattuEuroina = 0.0;
-        if (valittu.equals("Kaikki")) {
-            sumTankattuEuroina = tietokanta.tankattuYhteensaEuroina();
+        if (valittuVuosi.equals("Kaikki")) {
+            sumTankattuEuroina = tietokanta.tankattuYhteensaEuroina(valitunAutonID);
         } else {
-            sumTankattuEuroina = tietokanta.tankattuYhteensaEuroina(valittu);
+            sumTankattuEuroina = tietokanta.tankattuYhteensaEuroina(valittuVuosi, valitunAutonID);
         }
         String sumTankattuEuroinaStringina = String.valueOf((kaksiDesimaalia.format(sumTankattuEuroina)));
         tankattuYhteensaEuroina.setText(sumTankattuEuroinaStringina);

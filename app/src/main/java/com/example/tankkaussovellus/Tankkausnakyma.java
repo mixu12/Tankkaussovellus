@@ -11,20 +11,32 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
-public class Tankkausnakyma extends AppCompatActivity {
+public class Tankkausnakyma extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+
+    List<Auto> autotListaan;
+
+    int valitunAutonID = 0;
+
+    Tankkauskanta tietokanta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tankkausnakyma);
+
+        tietokanta = new Tankkauskanta(Tankkausnakyma.this);
 
         final EditText maara = (EditText) findViewById(R.id.maara);
         final EditText mittarilukemanSyotto = (EditText) findViewById(R.id.mittarilukemanSyotto);
@@ -34,6 +46,8 @@ public class Tankkausnakyma extends AppCompatActivity {
         final Button tallennaTankkaus = (Button) findViewById(R.id.tallennaTankkaus);
 
         tankkauspaiva.setText(Paiva());
+        autotListaan();
+        spinneri();
 
         tallennaTankkaus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +80,7 @@ public class Tankkausnakyma extends AppCompatActivity {
 
         Tankkauskanta tankkauskanta = new Tankkauskanta(Tankkausnakyma.this);
         boolean onnistui = tankkauskanta.lisaaTankkaus(tankkaus);
-        long testi = tankkauskanta.createTankkaustiedot(1,1);
+        long testi = tankkauskanta.createTankkaustiedot(valitunAutonID,1);
         Toast.makeText(Tankkausnakyma.this, "Tallennus onnistui", Toast.LENGTH_SHORT).show();
 
     }
@@ -102,5 +116,31 @@ public class Tankkausnakyma extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void autotListaan(){
+        autotListaan = new ArrayList<>();
+        autotListaan = tietokanta.kaikkiAutot();
+
+    }
+
+    public void spinneri(){
+        Spinner spinner = findViewById(R.id.spinnerAuto);
+        ArrayAdapter<Auto> adapter = new ArrayAdapter<Auto>(this, android.R.layout.simple_spinner_dropdown_item, autotListaan);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String valittuAuto = parent.getItemAtPosition(position).toString();
+
+        valitunAutonID = tietokanta.valitunAutonID(valittuAuto);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

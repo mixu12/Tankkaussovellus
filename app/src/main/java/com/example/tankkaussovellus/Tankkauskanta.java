@@ -168,7 +168,7 @@ public class Tankkauskanta extends SQLiteOpenHelper{
     public List<Tankkaus> kaikkiTankkaukset(){
         List<Tankkaus> tankkauslista = new ArrayList<>();
 
-        String queryString = "SELECT * FROM " + TANKKAUKSET;
+        String queryString = "SELECT " + TANKKAUKSET + ".* " + " FROM " + TANKKAUKSET;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(queryString, null);
@@ -195,6 +195,38 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         db.close();
         return tankkauslista;
     }
+
+    public List<Tankkaus> kaikkiTankkaukset(int autoID){
+        List<Tankkaus> tankkauslista = new ArrayList<>();
+
+        String queryString = "SELECT " + TANKKAUKSET + ".* " + " FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        if (cursor.moveToFirst()) {
+            // Käy läpi kaikki tallennetut tiedot ja luo uuden nimike-olion. Laittaa ne sitten listaan, joka palautetaan.
+            do {
+                int id = cursor.getInt(0);
+                double maara = cursor.getDouble(1);
+                int mittarilukemanSyotto = cursor.getInt(2);
+                double kokonaishinta = cursor.getDouble(cursor.getColumnIndex(COLUMN_KOKONAISHINTA));
+                String paiva = cursor.getString(cursor.getColumnIndex(COLUMN_PAIVA));
+
+                Tankkaus uusiTankkaus = new Tankkaus(id, maara, mittarilukemanSyotto, kokonaishinta, paiva);
+                tankkauslista.add(uusiTankkaus);
+
+            } while (cursor.moveToNext());
+
+        } else {
+            // Jos tulee virhe
+        }
+        // Sulkee tietokannan
+        cursor.close();
+        db.close();
+        return tankkauslista;
+    }
+
 
     public List<Tankkaus> yksiTankkaus(int valittuID){
         List<Tankkaus> tankkauslista = new ArrayList<>();
@@ -247,7 +279,7 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         return vuodet;
     }
 
-    public double keskikulutus(){
+    public double keskikulutus(int autoID){
 
         double sumTankattu = 0;
         int viimeisinMittarilukema = 0;
@@ -257,8 +289,10 @@ public class Tankkauskanta extends SQLiteOpenHelper{
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String queryString = "SELECT SUM(" + COLUMN_MAARA + ") as sumTankattu, MIN(" + COLUMN_MAARA + ") as minTankattu, MAX(" + COLUMN_MITTARILUKEMA + ") as viimeisinMittarilukema, MIN(" + COLUMN_MITTARILUKEMA + ") as minMittarilukema FROM " + TANKKAUKSET;
-        String queryStringToinen = "SELECT " + COLUMN_MAARA + " as ekaTankattu FROM " + TANKKAUKSET + " WHERE " + COLUMN_ID + " =(SELECT MIN(" + COLUMN_ID + ") FROM " + TANKKAUKSET + ")";
+        String queryString = "SELECT SUM(" + COLUMN_MAARA + ") as sumTankattu, MIN(" + COLUMN_MAARA + ") as minTankattu, MAX(" + COLUMN_MITTARILUKEMA + ") as viimeisinMittarilukema, MIN(" + COLUMN_MITTARILUKEMA + ") as minMittarilukema FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID;
+        String queryStringToinen = "SELECT " + COLUMN_MAARA + " as ekaTankattu FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT
+                + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND "
+                + TANKKAUKSET + "." + COLUMN_ID + " =(SELECT MIN(" + TANKKAUKSET + "." + COLUMN_ID + ") FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID +")";
 
         Cursor cursor = db.rawQuery(queryString, null);
         Cursor cursorToinen = db.rawQuery(queryStringToinen, null);
@@ -284,7 +318,7 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         return keskikulutus;
     }
 
-    public double keskikulutus(String aikavali){
+    public double keskikulutus(String aikavali, int autoID){
 
         double sumTankattu = 0;
         int viimeisinMittarilukema = 0;
@@ -294,8 +328,13 @@ public class Tankkauskanta extends SQLiteOpenHelper{
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String queryString = "SELECT SUM(" + COLUMN_MAARA + ") as sumTankattu, MIN(" + COLUMN_MAARA + ") as minTankattu, MAX(" + COLUMN_MITTARILUKEMA + ") as viimeisinMittarilukema, MIN(" + COLUMN_MITTARILUKEMA + ") as minMittarilukema FROM " + TANKKAUKSET + " WHERE " + COLUMN_VUOSI + " = " + aikavali;
-        String queryStringToinen = "SELECT " + COLUMN_MAARA + " as ekaTankattu FROM " + TANKKAUKSET + " WHERE " + COLUMN_ID + " =(SELECT MIN(" + COLUMN_ID + ") FROM " + TANKKAUKSET + " WHERE " + COLUMN_VUOSI + " = " + aikavali + ")" + " AND " + COLUMN_VUOSI + " = " + aikavali;
+        String queryString = "SELECT SUM(" + COLUMN_MAARA + ") as sumTankattu, MIN(" + COLUMN_MAARA + ") as minTankattu, MAX(" + COLUMN_MITTARILUKEMA + ") as viimeisinMittarilukema, MIN(" + COLUMN_MITTARILUKEMA + ") as minMittarilukema FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND " + COLUMN_VUOSI + " = " + aikavali + " AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID;;
+        String queryStringToinen = "SELECT " + COLUMN_MAARA + " as ekaTankattu FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT
+                + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND "
+                + TANKKAUKSET + "." + COLUMN_ID + " =(SELECT MIN(" + TANKKAUKSET + "." + COLUMN_ID + ") "
+                + "FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID
+                + " AND " + COLUMN_VUOSI + " = " + aikavali + " AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID + ")"
+                + " AND " + COLUMN_VUOSI + " = " + aikavali + " AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID;
 
         Cursor cursor = db.rawQuery(queryString, null);
         Cursor cursorToinen = db.rawQuery(queryStringToinen, null);
@@ -321,13 +360,13 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         return keskikulutus;
     }
 
-    public double keskihinta(){
+    public double keskihinta(int autoID){
 
         double hintojenSummat = 0;
         double maaranSumma = 0;
         // Datan haku kannasta
 
-        String queryString = "SELECT SUM(" + COLUMN_KOKONAISHINTA + ") as hintojenSummat, SUM(" + COLUMN_MAARA + ") as maaranSumma FROM " + TANKKAUKSET + " WHERE " + COLUMN_KOKONAISHINTA + "> 0";
+        String queryString = "SELECT SUM(" + COLUMN_KOKONAISHINTA + ") as hintojenSummat, SUM(" + COLUMN_MAARA + ") as maaranSumma FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND " + COLUMN_KOKONAISHINTA + "> 0 AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(queryString, null);
@@ -348,13 +387,13 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         return keskihinta;
     }
 
-    public double keskihinta(String aikavali){
+    public double keskihinta(String aikavali, int autoID){
 
         double hintojenSummat = 0;
         double maaranSumma = 0;
         // Datan haku kannasta
 
-        String queryString = "SELECT SUM(" + COLUMN_KOKONAISHINTA + ") as hintojenSummat, SUM(" + COLUMN_MAARA + ") as maaranSumma FROM " + TANKKAUKSET + " WHERE " + COLUMN_KOKONAISHINTA + "> 0 AND " + COLUMN_VUOSI + " = " + aikavali;
+        String queryString = "SELECT SUM(" + COLUMN_KOKONAISHINTA + ") as hintojenSummat, SUM(" + COLUMN_MAARA + ") as maaranSumma FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND " + COLUMN_KOKONAISHINTA + "> 0 AND " + COLUMN_VUOSI + " = " + aikavali + " AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(queryString, null);
@@ -375,12 +414,12 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         return keskihinta;
     }
 
-    public double tankattuYhteensa(){
+    public double tankattuYhteensa(int autoID){
 
         double sumTankattu = 0;
         // Datan haku kannasta
 
-        String queryString = "SELECT SUM(" + COLUMN_MAARA + ") as tankattuYhteensa FROM " + TANKKAUKSET;
+        String queryString = "SELECT SUM(" + COLUMN_MAARA + ") as tankattuYhteensa FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(queryString, null);
@@ -397,12 +436,12 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         return sumTankattu;
     }
 
-    public double tankattuYhteensa(String aikavali){
+    public double tankattuYhteensa(String aikavali, int autoID){
 
         double sumTankattu = 0;
         // Datan haku kannasta
 
-        String queryString = "SELECT SUM(" + COLUMN_MAARA + ") as tankattuYhteensa FROM " + TANKKAUKSET + " WHERE " + COLUMN_VUOSI + " = " + aikavali;
+        String queryString = "SELECT SUM(" + COLUMN_MAARA + ") as tankattuYhteensa FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND " + COLUMN_VUOSI + " = " + aikavali + " AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID;;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(queryString, null);
@@ -419,12 +458,12 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         return sumTankattu;
     }
 
-    public double tankattuYhteensaEuroina(){
+    public double tankattuYhteensaEuroina(int autoID){
 
         double sumTankattuEurot = 0;
         // Datan haku kannasta
 
-        String queryString = "SELECT SUM(" + COLUMN_KOKONAISHINTA + ") as tankattuYhteensaEuroina FROM " + TANKKAUKSET;
+        String queryString = "SELECT SUM(" + COLUMN_KOKONAISHINTA + ") as tankattuYhteensaEuroina FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(queryString, null);
@@ -441,12 +480,12 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         return sumTankattuEurot;
     }
 
-    public double tankattuYhteensaEuroina(String aikavali){
+    public double tankattuYhteensaEuroina(String aikavali, int autoID){
 
         double sumTankattuEurot = 0;
         // Datan haku kannasta
 
-        String queryString = "SELECT SUM(" + COLUMN_KOKONAISHINTA + ") as tankattuYhteensaEuroina FROM " + TANKKAUKSET + " WHERE " + COLUMN_VUOSI + " = " + aikavali;
+        String queryString = "SELECT SUM(" + COLUMN_KOKONAISHINTA + ") as tankattuYhteensaEuroina FROM " + TANKKAUKSET + " JOIN " + TANKKAUSTIEDOT + " ON " + TANKKAUKSET + "." + COLUMN_ID + " = " + TANKKAUSTIEDOT + "." + COLUMN_TANKKAUSID + " AND " + COLUMN_VUOSI + " = " + aikavali + " AND " + TANKKAUSTIEDOT + "." + COLUMN_AUTOID_TANKKAUSTIEDOT + " = " + autoID;;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(queryString, null);
@@ -506,6 +545,29 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         cursor.close();
         db.close();
         return autolista;
+    }
+
+    public int valitunAutonID(String autonMalli){
+        int autoID = 0;
+
+        String queryString = "SELECT " + COLUMN_IDAUTO + " as autoID FROM " + AUTO + " WHERE " + COLUMN_AUTONMALLI + " = ?";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] valinnat = {autonMalli};
+
+        Cursor cursor = db.rawQuery(queryString, valinnat);
+
+        if (cursor.moveToFirst()) {
+            do {
+                autoID = cursor.getInt(cursor.getColumnIndex("autoID"));;
+            } while (cursor.moveToNext());
+        }
+
+        // Sulkee tietokannan
+        cursor.close();
+        db.close();
+        return autoID;
     }
 
 

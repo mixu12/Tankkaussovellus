@@ -19,6 +19,10 @@ public class Auto {
     public Boolean getOletus() {
         return oletus;
     }
+
+    public String toString(){
+        return autonMalli;
+    }
 }
 
 

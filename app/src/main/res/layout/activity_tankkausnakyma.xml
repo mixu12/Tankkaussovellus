@@ -8,80 +8,78 @@
 
     <TextView
         android:id="@+id/tankattuMaara"
-        android:layout_width="200dp"
+        android:layout_width="150dp"
         android:layout_height="20dp"
+        android:layout_marginStart="5dp"
         android:layout_marginTop="20dp"
         android:text="Tankattu l"
         android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/maara"
-        android:layout_width="200dp"
+        android:layout_width="150dp"
         android:layout_height="40dp"
+        android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:ems="10"
         android:inputType="numberDecimal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tankattuMaara" />
 
     <TextView
         android:id="@+id/mittarilukema"
-        android:layout_width="200dp"
+        android:layout_width="150dp"
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="5dp"
         android:text="Mittarilukema km"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/maara" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/mittarilukemanSyotto"
-        android:layout_width="200dp"
+        android:layout_width="150dp"
         android:layout_height="40dp"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
         android:ems="10"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mittarilukema" />
 
     <TextView
         android:id="@+id/hinta"
-        android:layout_width="200dp"
+        android:layout_width="150dp"
         android:layout_height="20dp"
+        android:layout_marginStart="5dp"
         android:layout_marginTop="20dp"
         android:text="Kokonaishinta €"
         android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mittarilukemanSyotto" />
+        app:layout_constraintTop_toBottomOf="@+id/maara" />
 
     <TextView
         android:id="@+id/paiva"
-        android:layout_width="200dp"
+        android:layout_width="150dp"
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="5dp"
         android:text="Tankkauspäivä"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hinnanSyotto" />
+        app:layout_constraintTop_toBottomOf="@+id/mittarilukemanSyotto" />
 
     <EditText
         android:id="@+id/hinnanSyotto"
-        android:layout_width="200dp"
+        android:layout_width="150dp"
         android:layout_height="40dp"
+        android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:ems="10"
         android:inputType="numberDecimal"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hinta" />
 
@@ -92,21 +90,40 @@
         android:layout_marginTop="20dp"
         android:text="Tallenna"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tankkauspaiva" />
+        app:layout_constraintTop_toBottomOf="@+id/spinnerAuto" />
 
     <EditText
         android:id="@+id/tankkauspaiva"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
         android:autoText="false"
         android:ems="10"
         android:inputType="date"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/paiva" />
+
+    <TextView
+        android:id="@+id/autonNimi"
+        android:layout_width="150dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="20dp"
+        android:text="Auto"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hinnanSyotto" />
+
+    <Spinner
+        android:id="@+id/spinnerAuto"
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/autonNimi" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
