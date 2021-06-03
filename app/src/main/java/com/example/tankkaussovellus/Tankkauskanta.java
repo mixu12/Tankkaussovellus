@@ -58,6 +58,8 @@ public class Tankkauskanta extends SQLiteOpenHelper{
 
     }
 
+    // Suurin osa metodoista on kahteen kertaan, koska toinen sisältää mahdollisuuden tarkastella vain tietyllä aikavälillä ja toinen tietyllä aikavälillä ja autolla.
+
     public long createTankkaustiedot(long autoid, long tankkausasemaid){
 
         int viimeisinID = 0;
@@ -100,8 +102,10 @@ public class Tankkauskanta extends SQLiteOpenHelper{
         long insert = db.insert(TANKKAUKSET, null, cv);
 
         if (insert == -1){
+            db.close();
             return false;
         } else{
+            db.close();
             return true;
         }
     }

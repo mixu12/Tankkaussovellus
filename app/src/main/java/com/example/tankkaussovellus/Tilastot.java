@@ -74,6 +74,7 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
         vuodet = tietokanta.vuodet();
     }
 
+    // Tässä muokataan tietokannasta saatua dataa listviewiin.
     public void tankkauslistaanData(){
         listaan();
 
@@ -81,7 +82,7 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
         DecimalFormat yksiDesimaali = new DecimalFormat("#,###,##0.0");
 
         tankkaustulokset = new ArrayList<>();
-        double kulutus = 0.0;
+        double kulutus = 0.0; //Lähtöarvo kulutukselle
 
         for (int i = 0; i < tankkauslista.size(); i++){
             int matkaNyt = tankkauslista.get(i).getMittarilukema();
@@ -90,11 +91,14 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
             String paiva = tankkauslista.get(i).getPaiva();
             double kokonaishinta = tankkauslista.get(i).getKokonaishinta();
 
+            //Nämä päivittyy listaan, jonka perusteella muodostetaan listview-näkymä.
+            //Ensimmäistä tankkausta ei voida verrata mihinkään, joten kulutusta ei voi laskea edellisestä tankkauksesta. Oletus on 0,0 l/100 km.
             if (i < 1){
                 String kulutusTekstina = String.valueOf(yksiDesimaali.format(kulutus));
                 String listaan = tankattuNytTekstina + " l, " + String.valueOf(matkaNyt) + " km, " + kulutusTekstina + " l/100 km, "+ kokonaishinta + " €, " + paiva;
                 naytettavatListalla(listaan, i);
 
+                //Tässä lasketaan matkasta, joka on ajettu edellisestä tankkauksesta ja verrataan sitä tankattuun määrään.
             } else {
                 int matkaEdellinen = tankkauslista.get(i-1).getMittarilukema();
                 kulutus = 100.0 * ((tankattuNyt) / (matkaNyt - matkaEdellinen));
@@ -106,6 +110,7 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
         }
     }
 
+    // Spinnerissä näytettävät vuodet
     public void naytettavatListalla(String listaan, int i){
         if (valittuVuosi.equals("Kaikki")){
             tankkaustulokset.add(listaan);
@@ -116,6 +121,7 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
         }
     }
 
+    // Spinnerissä näytettävät autot
     public void autotListaan(){
         autotListaan = new ArrayList<>();
         autotListaan = tietokanta.kaikkiAutot();
@@ -150,6 +156,7 @@ public class Tilastot extends AppCompatActivity implements AdapterView.OnItemSel
             valitunAutonID = tietokanta.valitunAutonID(valittuAuto);
         }
 
+        // Päivittää näkyvillä olevat luvut valitulle vuodelle tai autolle
         tankattuYhteensaLitroina();
         tankattuYhteensaEuroina();
         keskihinta();

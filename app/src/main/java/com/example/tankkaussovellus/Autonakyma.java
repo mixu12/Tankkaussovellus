@@ -28,7 +28,7 @@ public class Autonakyma extends AppCompatActivity {
             public void onClick(View view) {
 
                 String malli = mallinSyotto.getText().toString();
-                Boolean oletusauto = false;
+                Boolean oletusauto = false; //Tietoa auton oletuksesta ei käytetä vielä mihinkään
                 if (checkbox.isChecked()) {
                     oletusauto = true;
                 }

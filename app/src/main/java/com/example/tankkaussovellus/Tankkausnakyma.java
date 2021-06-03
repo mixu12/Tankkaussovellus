@@ -45,6 +45,8 @@ public class Tankkausnakyma extends AppCompatActivity implements AdapterView.OnI
 
         final Button tallennaTankkaus = (Button) findViewById(R.id.tallennaTankkaus);
 
+        asetaAlkuarvot(maara, mittarilukemanSyotto, hinnanSyotto, tankkauspaiva);
+
         tankkauspaiva.setText(Paiva());
         autotListaan();
         spinneri();
@@ -52,26 +54,38 @@ public class Tankkausnakyma extends AppCompatActivity implements AdapterView.OnI
         tallennaTankkaus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Konstruktoreiden ja hinnansyötön tarkastuksen puolesta on mahdollista antaa tankkaus ilman hintaa.
+                // Tätä ei kuitenkaan sallita, koska muuten keskihinnan ja kokonaishinnan laskennat eivät toimi.
+                if (!maara.getText().toString().equals("") && !mittarilukemanSyotto.getText().toString().equals("")
+                        && !hinnanSyotto.getText().toString().equals("") && !tankkauspaiva.getText().toString().equals("")) {
+                
+                    double getMaara = Double.valueOf(maara.getText().toString());
+                    int getMittarilukemanSyotto = Integer.valueOf(mittarilukemanSyotto.getText().toString());
+                    double getHinnanSyotto = 0;
+                    String getTankkauspaiva = tankkauspaiva.getText().toString();
 
-                double getMaara = Double.valueOf(maara.getText().toString());
-                int getMittarilukemanSyotto = Integer.valueOf(mittarilukemanSyotto.getText().toString());
-                double getHinnanSyotto = 0;
-                String getTankkauspaiva = tankkauspaiva.getText().toString();
+                    if(hinnanSyotto.getText().length() > 0) {
+                        getHinnanSyotto = Double.valueOf(hinnanSyotto.getText().toString());
+                    }
 
-                if(hinnanSyotto.getText().length() > 0) {
-                    getHinnanSyotto = Double.valueOf(hinnanSyotto.getText().toString());
+                    tallenna(getMaara, getMittarilukemanSyotto, getHinnanSyotto, getTankkauspaiva);
+
+                    suljeNappaimisto();
+
+                    asetaAlkuarvot(maara, mittarilukemanSyotto, hinnanSyotto, tankkauspaiva);
+                } else {
+                    Toast.makeText(Tankkausnakyma.this, "Anna kaikki tiedot", Toast.LENGTH_SHORT).show();
                 }
-
-                tallenna(getMaara,getMittarilukemanSyotto,getHinnanSyotto,getTankkauspaiva);
-
-                maara.setText("");
-                mittarilukemanSyotto.setText("");
-                hinnanSyotto.setText("");
-                tankkauspaiva.setText(Paiva());
-
-                suljeNappaimisto();
             }
         });
+    }
+
+    public void asetaAlkuarvot(EditText maara, EditText mittarilukemanSyotto, EditText hinnanSyotto, EditText tankkauspaiva){
+
+        maara.setText("");
+        mittarilukemanSyotto.setText("");
+        hinnanSyotto.setText("");
+        tankkauspaiva.setText(Paiva());
     }
 
     public void tallenna(double getMaara, int getMittarilukemanSyotto, double getHinnanSyotto, String getTankkauspaiva){
@@ -93,6 +107,7 @@ public class Tankkausnakyma extends AppCompatActivity implements AdapterView.OnI
         }
     }
 
+    // Hakee oletuksesi kuluvan päivän.
     public String Paiva() {
         ZonedDateTime aika = ZonedDateTime.now();
         DateTimeFormatter muokkaaja = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -118,6 +133,7 @@ public class Tankkausnakyma extends AppCompatActivity implements AdapterView.OnI
         return super.onOptionsItemSelected(item);
     }
 
+    // Tästä alkaa autovalikon koodi
     public void autotListaan(){
         autotListaan = new ArrayList<>();
         autotListaan = tietokanta.kaikkiAutot();

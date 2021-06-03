@@ -21,7 +21,7 @@ import android.widget.Toast;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
+//Tämän luokan tarkoitus on tuoda tankkauskantaan tallennettu raakadata näkyville, jotta sitä pääsee muokkaamaan.
 public class Muokkaa extends AppCompatActivity {
 
     public ListView listView;
@@ -29,7 +29,6 @@ public class Muokkaa extends AppCompatActivity {
     Tankkauskanta tietokanta;
 
     List<Tankkaus> tankkauslista;
-    ArrayList<String> tankkaustulokset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,22 +41,19 @@ public class Muokkaa extends AppCompatActivity {
         registerForContextMenu(listView);
 
         tietokanta = new Tankkauskanta(Muokkaa.this);
-        listaan();
 
         paivitaLista();
 
     }
 
+    // Hakee tiedot tietokannasta listaa ja päivittää listview-näkymän.
     private void paivitaLista() {
-        listaan();
+        tankkauslista = new ArrayList<>();
+        tankkauslista = tietokanta.kaikkiTankkaukset();
+
         arrayAdapter = new ArrayAdapter(Muokkaa.this, R.layout.custom_layout, tankkauslista);
         listView.setAdapter(arrayAdapter);
 
-    }
-
-    public void listaan() {
-        tankkauslista = new ArrayList<>();
-        tankkauslista = tietokanta.kaikkiTankkaukset();
     }
 
     @Override

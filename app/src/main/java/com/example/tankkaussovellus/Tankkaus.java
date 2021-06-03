@@ -56,8 +56,11 @@ public class Tankkaus {
         }
     }
 
+    //Tämä metodi päivittää tietokantaan vuodeksi aina 20xx tyyppisen luvun. Käyttäjälle näkyvää päivää se ei muokkaa.
     public int getVuosi(){
         String[] vuosiStringina = this.paiva.split("\\.");
+
+        //Tarkistetaan montako numeroa annettu vuosi sisältää ja valitaan käsittelytapa sen mukaan.
         if (vuosiStringina[2].matches(("20[0-9]{2}"))){
             int vuosi = Integer.valueOf(vuosiStringina[2]);
             return vuosi;
@@ -71,8 +74,11 @@ public class Tankkaus {
         return 0;
     }
 
+    //Tämä metodi päivittää tietokantaan kuukauden aina ilman edessä olevaa nollaa. Käyttäjälle näkyvää päivää se ei muokkaa.
     public int getKuukausi(){
         String[] kuukausiStringina = this.paiva.split("\\.");
+
+        //Tarkistetaan montako numeroa annettu kuukausi sisältää ja valitaan käsittelytapa sen mukaan.
         if (kuukausiStringina[1].matches(("0[1-9]{1}"))){
             String[] kuukausiIlmanNollaa = kuukausiStringina[1].split("");
             int kuukausi = Integer.valueOf(kuukausiIlmanNollaa[1]);
