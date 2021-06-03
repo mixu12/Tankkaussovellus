@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+// Tätä luokkaa tarvitaan, kun tehdään muokkauksia tai korjauksia tietokantaan. Autoa ei voi vielä vaihtaa.
 public class TankkausnakymaMuokkaus extends AppCompatActivity {
 
     Tankkauskanta tietokanta;
