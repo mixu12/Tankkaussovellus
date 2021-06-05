@@ -12,7 +12,6 @@
         <activity android:name=".TankkausnakymaMuokkaus"></activity>
         <activity android:name=".Muokkaa" />
         <activity android:name=".Autonakyma" />
-        <activity android:name=".Auto" />
         <activity android:name=".Tilastot" />
         <activity android:name=".Tankkausnakyma" />
         <activity android:name=".MainActivity">
